@@ -14,7 +14,10 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
-    project: ["/Users/galis/Documents/bubbo-apis/functions/tsconfig.json", "tsconfig.dev.json"],
+    project: [
+      "/Users/galis/Documents/bubbo-apis/functions/tsconfig.json",
+      "tsconfig.dev.json",
+    ],
     sourceType: "module",
   },
   ignorePatterns: [
@@ -22,6 +25,7 @@ module.exports = {
   ],
   plugins: ["@typescript-eslint", "import"],
   rules: {
+    "object-curly-spacing": "off",
     "require-jsdoc": "off",
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
