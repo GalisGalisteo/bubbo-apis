@@ -7,9 +7,26 @@ export const getBooks = async (req: Request, res: Response) => {
     const books: Book[] = [];
     const booksSnapshot = await db.collection("books").get();
     booksSnapshot.forEach((doc) => {
-      const { author, title } = doc.data();
+      const {
+        author,
+        title,
+        summary,
+        yearPublished,
+        genre,
+        isbn,
+        dateCreated,
+      } = doc.data();
       const { id } = doc;
-      books.push({ author, title, id });
+      books.push({
+        id,
+        author,
+        title,
+        summary,
+        yearPublished,
+        genre,
+        isbn,
+        dateCreated,
+      });
     });
     res.status(200).json({
       status: "success",
@@ -25,13 +42,28 @@ export const getBooks = async (req: Request, res: Response) => {
 };
 
 export const addBook = async (req: Request, res: Response) => {
-  const { author, title } = req.body;
+  const { author, title, summary, yearPublished, genre, isbn } = req.body;
   try {
     const book = db.collection("books").doc();
-    const newBook: Book = {
-      id: book.id,
+    const newBookClass = new Book(
+      book.id,
       author,
       title,
+      summary,
+      yearPublished,
+      genre,
+      isbn
+    );
+
+    const newBook: Book = {
+      id: book.id,
+      author: author,
+      title: title,
+      summary: summary,
+      yearPublished: yearPublished,
+      genre: genre,
+      isbn: isbn,
+      dateCreated: newBookClass.dateCreated,
     };
 
     await book.set(newBook);
