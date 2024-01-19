@@ -11,7 +11,10 @@ export const getBooks = async (req: Request, res: Response) => {
       const { id } = doc;
       books.push({ author, title, id });
     });
-    res.status(200).json(books);
+    res.status(200).json({
+      status: "success",
+      data: books,
+    });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json(error.message);
@@ -24,14 +27,14 @@ export const getBooks = async (req: Request, res: Response) => {
 export const addBook = async (req: Request, res: Response) => {
   const { author, title } = req.body;
   try {
-    const book = await db.collection("books").doc();
+    const book = db.collection("books").doc();
     const newBook: Book = {
       id: book.id,
       author,
       title,
     };
 
-    book.set(newBook);
+    await book.set(newBook);
 
     res.status(200).send({
       status: "success",
@@ -50,14 +53,32 @@ export const addBook = async (req: Request, res: Response) => {
 export const findBook = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    // const book: Book[] = [];
     const bookRef = db.collection("books").doc(id);
     const doc = await bookRef.get();
 
-    // const newBook = new Book(id, book.data().author, book.data().title);
+    res.status(200).json({
+      status: "success",
+      message: "entry updated successfully",
+      data: doc.data(),
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json(error.message);
+    } else {
+      res.status(500).json("An unknown error occurred");
+    }
+  }
+};
 
-    // book.push(booksSnapshot);
-    res.status(200).json(doc.data());
+export const deleteBook = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const bookRef = db.collection("books").doc(id);
+    await bookRef.delete();
+    res.status(200).json({
+      status: "success",
+      message: "entry deleted successfully",
+    });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json(error.message);
