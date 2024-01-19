@@ -6,9 +6,11 @@ export const getBooks = async (req: Request, res: Response) => {
   try {
     const books: Book[] = [];
     const booksSnapshot = await db.collection("books").get();
-    booksSnapshot.forEach((doc: any) =>
-      books.push({ ...doc.data(), id: doc.id })
-    );
+    booksSnapshot.forEach((doc) => {
+      const { author, title } = doc.data();
+      const { id } = doc;
+      books.push({ author, title, id });
+    });
     res.status(200).json(books);
   } catch (error) {
     if (error instanceof Error) {
@@ -36,6 +38,26 @@ export const addBook = async (req: Request, res: Response) => {
       message: "entry added successfully",
       data: newBook,
     });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json(error.message);
+    } else {
+      res.status(500).json("An unknown error occurred");
+    }
+  }
+};
+
+export const findBook = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    // const book: Book[] = [];
+    const bookRef = db.collection("books").doc(id);
+    const doc = await bookRef.get();
+
+    // const newBook = new Book(id, book.data().author, book.data().title);
+
+    // book.push(booksSnapshot);
+    res.status(200).json(doc.data());
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json(error.message);
