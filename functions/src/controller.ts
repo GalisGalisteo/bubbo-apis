@@ -136,7 +136,7 @@ export const updateBook = async (req: Request, res: Response) => {
       isbn: isbn || currentData.isbn,
     };
 
-    await bookRef.set(updatedBook);
+    await bookRef.update(updatedBook);
 
     res.status(200).json({
       status: "success",
