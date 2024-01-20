@@ -70,7 +70,7 @@ export const addBook = async (req: Request, res: Response) => {
 
     res.status(200).send({
       status: "success",
-      message: "entry added successfully",
+      message: "book added successfully",
       data: newBook,
     });
   } catch (error) {
@@ -90,7 +90,7 @@ export const findBook = async (req: Request, res: Response) => {
 
     res.status(200).json({
       status: "success",
-      message: "entry updated successfully",
+      message: "book updated successfully",
       data: doc.data(),
     });
   } catch (error) {
@@ -109,7 +109,39 @@ export const deleteBook = async (req: Request, res: Response) => {
     await bookRef.delete();
     res.status(200).json({
       status: "success",
-      message: "entry deleted successfully",
+      message: "book deleted successfully",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json(error.message);
+    } else {
+      res.status(500).json("An unknown error occurred");
+    }
+  }
+};
+
+export const updateBook = async (req: Request, res: Response) => {
+  const { author, title, summary, yearPublished, genre, isbn } = req.body;
+  const { id } = req.params;
+
+  try {
+    const bookRef = db.collection("books").doc(id);
+    const currentData = (await bookRef.get()).data() || {};
+    const updatedBook = {
+      author: author || currentData.author,
+      title: title || currentData.title,
+      summary: summary || currentData.summary,
+      yearPublished: yearPublished || currentData.yearPublished,
+      genre: genre || currentData.genre,
+      isbn: isbn || currentData.isbn,
+    };
+
+    await bookRef.set(updatedBook);
+
+    res.status(200).json({
+      status: "success",
+      message: "book updated successfully",
+      data: updatedBook,
     });
   } catch (error) {
     if (error instanceof Error) {
