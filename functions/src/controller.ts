@@ -5,7 +5,10 @@ import { Book } from "./domain/Book";
 export const getBooks = async (req: Request, res: Response) => {
   try {
     const books: Book[] = [];
-    const booksSnapshot = await db.collection("books").get();
+    const booksSnapshot = await db
+      .collection("books")
+      .orderBy("dateCreated", "desc")
+      .get();
     booksSnapshot.forEach((doc) => {
       const {
         author,
@@ -14,6 +17,7 @@ export const getBooks = async (req: Request, res: Response) => {
         yearPublished,
         genre,
         isbn,
+        image,
         dateCreated,
       } = doc.data();
       const { id } = doc;
@@ -25,6 +29,7 @@ export const getBooks = async (req: Request, res: Response) => {
         yearPublished,
         genre,
         isbn,
+        image,
         dateCreated,
       });
     });
@@ -42,7 +47,8 @@ export const getBooks = async (req: Request, res: Response) => {
 };
 
 export const addBook = async (req: Request, res: Response) => {
-  const { author, title, summary, yearPublished, genre, isbn } = req.body;
+  const { author, title, summary, yearPublished, genre, isbn, image } =
+    req.body;
   try {
     const book = db.collection("books").doc();
     const newBookClass = new Book(
@@ -52,7 +58,8 @@ export const addBook = async (req: Request, res: Response) => {
       summary,
       yearPublished,
       genre,
-      isbn
+      isbn,
+      image
     );
 
     const newBook: Book = {
@@ -63,6 +70,7 @@ export const addBook = async (req: Request, res: Response) => {
       yearPublished: yearPublished,
       genre: genre,
       isbn: isbn,
+      image: image,
       dateCreated: newBookClass.dateCreated,
     };
 
@@ -121,19 +129,21 @@ export const deleteBook = async (req: Request, res: Response) => {
 };
 
 export const updateBook = async (req: Request, res: Response) => {
-  const { author, title, summary, yearPublished, genre, isbn } = req.body;
+  const { author, title, summary, yearPublished, genre, isbn, image } =
+    req.body;
   const { id } = req.params;
 
   try {
     const bookRef = db.collection("books").doc(id);
-    const currentData = (await bookRef.get()).data() || {};
+    // const currentData = (await bookRef.get()).data() || {};
     const updatedBook = {
-      author: author || currentData.author,
-      title: title || currentData.title,
-      summary: summary || currentData.summary,
-      yearPublished: yearPublished || currentData.yearPublished,
-      genre: genre || currentData.genre,
-      isbn: isbn || currentData.isbn,
+      author: author, // || currentData.author,
+      title: title, // || currentData.title,
+      summary: summary, // || currentData.summary,
+      yearPublished: yearPublished, // || currentData.yearPublished,
+      genre: genre, // || currentData.genre,
+      isbn: isbn, // || currentData.isbn,
+      image: image,
     };
 
     await bookRef.update(updatedBook);

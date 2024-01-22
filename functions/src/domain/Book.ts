@@ -6,6 +6,7 @@ export class Book {
   public yearPublished: string;
   public genre: string;
   public isbn: string;
+  public image: string;
   public dateCreated: Date;
 
   constructor(
@@ -15,7 +16,8 @@ export class Book {
     summary: string,
     yearPublished: string,
     genre: string,
-    isbn: string
+    isbn: string,
+    image: string
   ) {
     this.id = id;
     this.author = author;
@@ -24,6 +26,7 @@ export class Book {
     this.yearPublished = yearPublished;
     this.genre = genre;
     this.isbn = isbn;
+    this.image = image;
     this.dateCreated = new Date();
   }
 }
